@@ -1,8 +1,120 @@
+
 #!/bin/bash
 
-# Wi-Fi Deauthentication Tool
+# Wi-Fi Tool - Safe Menu Test Version
+
+detect_interface() {
+    wifi_interface=$(ip route show default | awk 'NR==1 {print $5}')
+
+    if [ -z "$wifi_interface" ]; then
+        wifi_interface=$(ip -o link show | awk -F': ' '$2 != "lo" {print $2; exit}')
+    fi
+}
+
+check_interface() {
+    detect_interface
+
+    if [ -z "$wifi_interface" ]; then
+        echo "No network interface detected."
+        return
+    fi
+
+    echo "Automatically detected interface: $wifi_interface"
+
+    if ip link show "$wifi_interface" >/dev/null 2>&1; then
+        ip link show "$wifi_interface"
+    else
+        echo "Interface could not be accessed."
+    fi
+}
+
+while true; do
+    echo "----------------------------------"
+    echo "       Wi-Fi Tool Test Menu"
+    echo "----------------------------------"
+    echo "1. Wi-Fi scanning (disabled)"
+    echo "2. Select network (disabled)"
+    echo "3. Client deauthentication (disabled)"
+    echo "4. Deauthenticate all clients (disabled)"
+    echo "5. Check adapter status"
+    echo "6. Detect interface again"
+    echo "7. Exit"
+    echo "----------------------------------"
+
+    read -r -p "Enter your choice: " choice
+
+    case "$choice" in
+        1|2|3|4)
+            echo "This function is disabled in the safe test version."
+            ;;
+        5)
+            check_interface
+            ;;
+        6)
+            detect_interface
+            echo "Detected interface: ${wifi_interface:-None}"
+            ;;
+        7)
+            echo "Exiting..."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please select 1-7."
+            ;;
+    esac
+
+    echo
+    read -r -p "Press Enter to continue..."
+    clear
+done
 # Created by Ezhil (@ezhil56x)
 
+#!/bin/bash
+
+display_menu() {
+    clear
+    echo "------------------------------------"
+    echo "Wi-Fi Deauthentication Tool"
+    echo "------------------------------------"
+    echo "1. Scan Wi-Fi (disabled in menu test)"
+    echo "2. Select Wi-Fi (disabled in menu test)"
+    echo "3. Deauthenticate client (disabled)"
+    echo "4. Deauthenticate all clients (disabled)"
+    echo "5. Check adapter status"
+    echo "6. Change interface name"
+    echo "7. Exit"
+    echo ""
+    read -rp "Enter your choice: " choice
+}
+
+wifi_interface="eth0"
+
+while true; do
+    display_menu
+
+    case "$choice" in
+        1|2|3|4)
+            echo "This function is disabled in the safe menu test."
+            ;;
+        5)
+            echo "Current interface: $wifi_interface"
+            ip link show "$wifi_interface"
+            ;;
+        6)
+            echo "Interface changes are disabled in this test."
+            ;;
+        7)
+            echo "Exiting..."
+            break
+            ;;
+        *)
+            echo "Invalid choice. Please try again."
+            ;;
+    esac
+
+    echo ""
+    read -rp "Press Enter to continue..."
+done
 display_menu() {
     echo "------------------------------------"
     echo "Wi-Fi Deauthentication Tool"
